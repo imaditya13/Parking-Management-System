@@ -1,4 +1,4 @@
-package com.Aditya.ParkingManagementSystem.Strategy;
+package com.Aditya.ParkingManagementSystem.Strategy.SpotAssignmentStrategy;
 
 import com.Aditya.ParkingManagementSystem.exceptions.NoParkingLotFoundException;
 import com.Aditya.ParkingManagementSystem.models.*;

@@ -8,12 +8,13 @@ public class Bill extends BaseEntity{
     private BillStatus billStatus;
     private Ticket ticket;
     private Integer amount;
-    private Date exitTime;
+    private Long exitTime;
 
     // WE SUPPORT PARTIAL PAYMENTS OTHERWISE ONLY PAYMENT OBJECT HERE INSTEAD OF LIST OF PAYMENTS OBJECT
     private List<Payment>paymentList;
     private Gate gate;
 
+    public Bill(){}
     public Bill(Long uuid) {
         super(uuid);
     }
@@ -31,7 +32,7 @@ public class Bill extends BaseEntity{
         return amount;
     }
 
-    public Date getExitTime() {
+    public Long getExitTime() {
         return exitTime;
     }
 
@@ -56,7 +57,7 @@ public class Bill extends BaseEntity{
         this.amount = amount;
     }
 
-    public void setExitTime(Date exitTime) {
+    public void setExitTime(Long exitTime) {
         this.exitTime = exitTime;
     }
 

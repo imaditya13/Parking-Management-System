@@ -22,4 +22,12 @@ public class ParkingSpotService {
        return parkingSpotRepository.getParkingSpotForParkingLot(parkingLot);
 
     }
+    public void setParkingSpotStatusOccupied(ParkingSpot parkingSpot)
+    {
+        parkingSpotRepository.setParkingSpotStatusOccupied(parkingSpot);
+    }
+    public void setParkingSpotStatusAvailable(ParkingSpot parkingSpot)
+    {
+        parkingSpotRepository.setParkingSpotStatusAvailable(parkingSpot);
+    }
 }

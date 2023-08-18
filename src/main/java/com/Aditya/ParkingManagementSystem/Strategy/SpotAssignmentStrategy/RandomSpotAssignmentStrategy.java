@@ -1,4 +1,4 @@
-package com.Aditya.ParkingManagementSystem.Strategy;
+package com.Aditya.ParkingManagementSystem.Strategy.SpotAssignmentStrategy;
 
 import com.Aditya.ParkingManagementSystem.exceptions.NoParkingLotFoundException;
 import com.Aditya.ParkingManagementSystem.models.*;
@@ -6,9 +6,8 @@ import com.Aditya.ParkingManagementSystem.services.ParkingLotService;
 import com.Aditya.ParkingManagementSystem.services.ParkingSpotService;
 
 import java.util.List;
-import java.util.Map;
 
-public class RandomSpotAssignmentStrategy implements SpotAssignmentStrategy{
+public class RandomSpotAssignmentStrategy implements SpotAssignmentStrategy {
     ParkingSpotService parkingSpotService;
     ParkingLotService parkingLotService;
     public RandomSpotAssignmentStrategy(ParkingSpotService parkingSpotService, ParkingLotService parkingLotService)
@@ -30,7 +29,7 @@ public class RandomSpotAssignmentStrategy implements SpotAssignmentStrategy{
             if(parkingSpot.getParkingSpotStatus().equals(ParkingSpotStatus.AVAILABLE) &&
                parkingSpot.getVehicleTypeList().contains(vehicleType))
             {
-                parkingSpot.setParkingSpotStatus(ParkingSpotStatus.OCCUPIED);
+                //parkingSpot.setParkingSpotStatus(ParkingSpotStatus.OCCUPIED);
                 return parkingSpot;
             }
         }

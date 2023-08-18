@@ -1,15 +1,14 @@
 package com.Aditya.ParkingManagementSystem;
 
-import com.Aditya.ParkingManagementSystem.Strategy.RandomSpotAssignmentStrategy;
-import com.Aditya.ParkingManagementSystem.Strategy.SpotAssignmentStrategy;
+import com.Aditya.ParkingManagementSystem.Strategy.SpotAssignmentStrategy.RandomSpotAssignmentStrategy;
+import com.Aditya.ParkingManagementSystem.Strategy.SpotAssignmentStrategy.SpotAssignmentStrategy;
+import com.Aditya.ParkingManagementSystem.controllers.BillController;
 import com.Aditya.ParkingManagementSystem.controllers.TicketController;
-import com.Aditya.ParkingManagementSystem.dto.GenerateTicketRequestDto;
+import com.Aditya.ParkingManagementSystem.dto.GenerateBillResponceDto;
 import com.Aditya.ParkingManagementSystem.dto.GenerateTicketResponceDto;
+import com.Aditya.ParkingManagementSystem.exceptions.NoTicketFoundException;
 import com.Aditya.ParkingManagementSystem.models.*;
-import com.Aditya.ParkingManagementSystem.repositories.GateRepository;
-import com.Aditya.ParkingManagementSystem.repositories.ParkingLotRepository;
-import com.Aditya.ParkingManagementSystem.repositories.ParkingSpotRepository;
-import com.Aditya.ParkingManagementSystem.repositories.VehicleRepository;
+import com.Aditya.ParkingManagementSystem.repositories.*;
 import com.Aditya.ParkingManagementSystem.services.*;
 
 import java.util.*;
@@ -18,80 +17,29 @@ import java.util.*;
 // then press Enter. You can now see whitespace characters in your code.
 public class ParkingManageMentSystem {
 
-    public static void fillRegistry(ObjectRegistry objectRegistry, Map<Long,Gate>gateMap, Map<Long,ParkingLot>parkingLotMap) {
-        VehicleRepository vehicleRepository = new VehicleRepository();
-        ParkingSpotRepository parkingSpotRepository = new ParkingSpotRepository();
-        ParkingLotRepository parkingLotRepository = new ParkingLotRepository(parkingLotMap);
-        GateRepository gateRepository = new GateRepository(gateMap);
-        GateService gateService = new GateService(gateRepository);
-        ParkingLotService parkingLotService = new ParkingLotService(parkingLotRepository);
-        ParkingSpotService parkingSpotService = new ParkingSpotService(parkingSpotRepository);
-        VehicleService vehicleService = new VehicleService(vehicleRepository);
-        SpotAssignmentStrategy spotAssignmentStrategy = new RandomSpotAssignmentStrategy(parkingSpotService, parkingLotService);
-        TicketService ticketService = new TicketService(vehicleService,gateService,spotAssignmentStrategy);
-        TicketController ticketController = new TicketController(ticketService);
 
-        objectRegistry.register("vehicleRepository",vehicleRepository);
-        objectRegistry.register("parkingSpotRepository",parkingSpotRepository);
-        objectRegistry.register("parkingLotRepository",parkingLotRepository);
-        objectRegistry.register("gateService",gateService);
-        objectRegistry.register("parkingLotService",parkingLotService);
-        objectRegistry.register("parkingSpotService",parkingSpotService);
-        objectRegistry.register("vehicleService",vehicleService);
-        objectRegistry.register("spotAssignmentStrategy",spotAssignmentStrategy);
-        objectRegistry.register("ticketService",ticketService);
-        objectRegistry.register("ticketController",ticketController);
-        objectRegistry.register("gateRepository",gateRepository);
+    public static void main(String[] args) throws NoTicketFoundException {
 
-    }
-    public static void main(String[] args) {
-
-
+            FillInfo fillInfo = new FillInfo();
         Scanner scanner = new Scanner(System.in);
         Map<Long,Operator>operatorMap = new HashMap<>();
         Map<Long,Gate>gateMap = new HashMap<>();
         List<Floor>floorList = new ArrayList<>();
-        Map<Long,Floor>floorMap = new HashMap<>();
+        Map<Long,Ticket>ticketMap = new HashMap<>();
         Map<Long,ParkingLot>parkingLotMap = new HashMap<>();
+        Map<Long,Bill>billMap = new HashMap<>();
+        fillInfo.operatorAndGateInfo(operatorMap,gateMap);
 
-        for(int i=1;i<=3;i++)
-        {
-            System.out.println("Enter the Name of operator "+ i);
-            String name = scanner.next();
+        fillInfo.floorAndParkingSpotInfo(floorList);
 
-            Operator operator = new Operator(System.currentTimeMillis(),name);
-            operatorMap.put(operator.getId(),operator);
-
-            Gate gate = new Gate((long)i,i,GateStatus.AVAILABLE,GateType.Entry);
-            gateMap.put(gate.getId(),gate);
-
-            operator.setGate(gate);
-            gate.setOperator(operator);
-        }
-        System.out.println("How many floors Yours parkingLot have?");
-        int noOfFloors = scanner.nextInt();
-        for(int i=0;i<noOfFloors;i++)
-        {
-            System.out.println("how many Parking Spot you have on floor "+i);
-            Integer noOfParkingSpot = scanner.nextInt();
-            List<ParkingSpot>parkingSpotList =  new ArrayList<>();
-            for(int j=1;j<=noOfParkingSpot;j++)
-            {
-                //System.out.println("Please Enter ParkingSpot "+j+" supported Vehicles");
-                List<VehicleType>vehicleTypes = new ArrayList<>(List.of(VehicleType.AUTO,VehicleType.BUS,VehicleType.SEDAN,VehicleType.SUV,VehicleType.MOTORCYCLE));
-                ParkingSpot parkingSpot = new ParkingSpot(System.currentTimeMillis(),j,ParkingSpotStatus.AVAILABLE,vehicleTypes,i);
-                parkingSpotList.add(parkingSpot);
-            }
-            Floor floor = new Floor(System.currentTimeMillis(),parkingSpotList,i,FloorStatus.AVAILABLE);
-            floorList.add(floor);
-        }
-
+        //createParkingLot
         ParkingLot parkingLot = new ParkingLot(System.currentTimeMillis(),"RG Parking",floorList,gateMap,"Sinhgad Vadgaon (bk)");
          parkingLotMap.put(parkingLot.getId(),parkingLot);
 
 
-       // ObjectRegistry objectRegistry = new ObjectRegistry();
-       //  fillRegistry(objectRegistry,gateMap,parkingLotMap);
+      // ObjectRegistry objectRegistry = new ObjectRegistry();
+       // fillInfo.fillRegistry(objectRegistry,gateMap,parkingLotMap);
+
         VehicleRepository vehicleRepository = new VehicleRepository();
         ParkingSpotRepository parkingSpotRepository = new ParkingSpotRepository();
         ParkingLotRepository parkingLotRepository = new ParkingLotRepository(parkingLotMap);
@@ -101,33 +49,36 @@ public class ParkingManageMentSystem {
         ParkingSpotService parkingSpotService = new ParkingSpotService(parkingSpotRepository);
         VehicleService vehicleService = new VehicleService(vehicleRepository);
         SpotAssignmentStrategy spotAssignmentStrategy = new RandomSpotAssignmentStrategy(parkingSpotService, parkingLotService);
-        TicketService ticketService = new TicketService(vehicleService,gateService,spotAssignmentStrategy);
+        TicketRepository ticketRepository = new TicketRepository(ticketMap);
+        TicketService ticketService = new TicketService(vehicleService,gateService,parkingSpotService,spotAssignmentStrategy,ticketRepository);
         TicketController ticketController = new TicketController(ticketService);
+        BillRepository billRepository = new BillRepository(billMap);
+        BillService billService = new BillService(billRepository,ticketService,gateService,parkingSpotService);
+        BillController billController = new BillController(billService);
 
-        System.out.println("Is there any vehicle on any gate [y/n]");
-        String ans = scanner.next();
+        String ans = "y";
 
         while(ans.equals("y")) {
-            System.out.println("Enter gate number that your car enter: ");
-            Long gateNo = scanner.nextLong();
-            System.out.println("Enter your vehicle number : ");
-            Long vehicleNo = scanner.nextLong();
-            System.out.println("Enter your vehicle type : ");
-            String vehicleType = scanner.next();
-
-
-
-            GenerateTicketRequestDto requestDto = new GenerateTicketRequestDto();
-            requestDto.setGateId(gateNo);
-            requestDto.setVehicleNumber(vehicleNo);
-            requestDto.setVehicleType(VehicleType.SUV);
-
-            GenerateTicketResponceDto responseDto =ticketController.generateTicket(requestDto);
-
-                   ticketController.displayTicket(responseDto);
 
             System.out.println("Is there any vehicle on any gate [y/n]");
             ans = scanner.next();
+            if(ans.equals("n"))break;
+
+           System.out.println("which gate[entry/exit]");
+           String g = scanner.next();
+
+           if(g.equals("exit"))
+           {
+              GenerateBillResponceDto billResponseDto = fillInfo.fillExitGateInfo(billController);
+             billController.displayBill(billResponseDto);
+           }
+           else
+            {
+               GenerateTicketResponceDto ticketResponseDto = fillInfo.fillEntryGateInfo(ticketController);
+                System.out.println("you want Ticket [y/n]");
+                String s = scanner.next();
+                if(s.equals("y")) ticketController.displayTicket(ticketResponseDto);
+            }
         }
     }
 }

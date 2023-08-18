@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ParkingSpotRepository {
+
     public List<ParkingSpot> getParkingSpotForParkingLot(ParkingLot parkingLot)
     {
         List<ParkingSpot>parkingSpotList = new ArrayList<>();
@@ -20,5 +21,13 @@ public class ParkingSpotRepository {
         }
 
         return parkingSpotList;
+    }
+    public void setParkingSpotStatusOccupied(ParkingSpot parkingSpot)
+    {
+       parkingSpot.setParkingSpotStatus(ParkingSpotStatus.OCCUPIED);
+    }
+    public void setParkingSpotStatusAvailable(ParkingSpot parkingSpot)
+    {
+        parkingSpot.setParkingSpotStatus(ParkingSpotStatus.AVAILABLE);
     }
 }

@@ -2,6 +2,7 @@ package com.Aditya.ParkingManagementSystem.controllers;
 
 import com.Aditya.ParkingManagementSystem.dto.GenerateTicketRequestDto;
 import com.Aditya.ParkingManagementSystem.dto.GenerateTicketResponceDto;
+import com.Aditya.ParkingManagementSystem.exceptions.EnterExitGateIdException;
 import com.Aditya.ParkingManagementSystem.exceptions.NoGateIdFoundException;
 import com.Aditya.ParkingManagementSystem.exceptions.NoParkingLotFoundException;
 import com.Aditya.ParkingManagementSystem.exceptions.NoParkingSpotException;
@@ -40,12 +41,15 @@ public class TicketController {
           } catch (NoParkingLotFoundException e) {
               System.out.println(e.getMessage());
               ticketResponseDto.setResponseStatus(ResponseStatus.FAIL);
+          } catch (EnterExitGateIdException e) {
+              System.out.println(e.getMessage());
+              ticketResponseDto.setResponseStatus(ResponseStatus.FAIL);
           }
 
           return ticketResponseDto;
       }
-      public void displayTicket(GenerateTicketResponceDto responceDto)
+      public void displayTicket(GenerateTicketResponceDto responseDto)
       {
-          ticketService.displayMyTicket(responceDto);
+          ticketService.displayMyTicket(responseDto);
       }
 }
